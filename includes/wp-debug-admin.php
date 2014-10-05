@@ -11,26 +11,10 @@
 
 class WpDebugAdmin
 {
-  /**
-   * Holds the values to be used in the fields callbacks
-   */
-  private $options;
-
-  public function __construct(){
-    add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
-    add_action( 'admin_init', array( $this, 'page_init' ) );
-    add_action( 'admin_head', array( $this, 'plugin_management' ) );
-
-  }
-
-  /***********************************************************                                                          
-     _____   _       _        _____     _   _   _             
-    |  _  |_| |_____|_|___   |   __|___| |_| |_|_|___ ___ ___ 
-    |     | . |     | |   |  |__   | -_|  _|  _| |   | . |_ -|
-    |__|__|___|_|_|_|_|_|_|  |_____|___|_| |_| |_|_|_|_  |___|
-                                                     |___|    
-    Admin Settings
-  */
+    public function __construct(){
+    	   add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
+	   add_action( 'admin_init', array( $this, 'page_init' ) );
+    }
 
   /**
    * Add options page
@@ -38,10 +22,10 @@ class WpDebugAdmin
   public function add_plugin_page(){
       // This page will be under "Settings"
       add_options_page(
-          'WpBooj', 
-          'WpBooj', 
+          'WpDebug', 
+          'WpDebug', 
           'manage_options', 
-          'wp-booj-admin', 
+          'wp-debug-admin', 
           array( $this, 'create_admin_page' )
       );
   }
@@ -51,16 +35,16 @@ class WpDebugAdmin
    */
   public function create_admin_page(){
     // Set class property
-    $this->options = get_option( 'wp-booj' );
+    $this->options = get_option( 'wp-debug' );
     ?>
     <div class="wrap">
       <?php screen_icon(); ?>
-      <h2>WpBooj Settings</h2>           
+      <h2>WpDebug Settings</h2>           
       <form method="post" action="options.php">
         <?php
           // This prints out all hidden setting fields
-          settings_fields( 'wp-booj' );   
-          do_settings_sections( 'wp-booj-admin' );
+          settings_fields( 'wp-debug' );   
+          do_settings_sections( 'wp-debug-admin' );
           submit_button(); 
         ?>
       </form>
@@ -73,8 +57,8 @@ class WpDebugAdmin
    */
   public function page_init(){        
     register_setting(
-      'wp-booj', // Option group
-      'wp-booj', // Option name
+      'wp-debug', // Option group
+      'wp-debug', // Option name
       array( $this, 'sanitize' ) // Sanitize
     );
 
@@ -86,13 +70,18 @@ class WpDebugAdmin
     );  
 
     add_settings_field(
-      'use_WpBoojDebug',
+      'use_WpDebug',
       'Enable Debugger',
       array( $this, 'use_WpBoojDebug_callback' ),
-      'wp-booj-admin',
+      'wp-debug-admin',
       'setting_section_id'
     );
+  }
 
+  public function use_WpBoojDebug_callback(){
+    ?>
+    <input type="checkbox" name="wp-booj[use_WpBoojDebug]" <? if( $this->options['use_WpBoojDebug'] == 'on' ){ echo 'checked="checked"'; } ?> />
+    <?php
   }
 
   /**
@@ -102,6 +91,7 @@ class WpDebugAdmin
    */
   public function sanitize( $input ){
     $new_input = array();
+    
     if( isset( $input['use_WpBoojDebug'] ) )
       $new_input['use_WpBoojDebug'] = $input['use_WpBoojDebug'];
 
@@ -115,14 +105,7 @@ class WpDebugAdmin
     print "If you don't understand these options, you will want to leave them as they are!";
   }
 
-  /** 
-   * Get the settings option array and print one of its values
-   */
-
-  public function use_WpBoojDebug_callback(){
-    ?>
-    <input type="checkbox" name="wp-booj[use_WpBoojDebug]" <? if( $this->options['use_WpBoojDebug'] == 'on' ){ echo 'checked="checked"'; } ?> />        
-    <?
-  }    
-
 }
+
+/* ENDFILE: includes/wp-debug-admin.php */
+
